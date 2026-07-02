@@ -1,0 +1,163 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Yu Gothic", sans-serif;
+}
+
+body{
+    background:#eef4fb;
+}
+
+header{
+    background:#1565c0;
+    color:white;
+    text-align:center;
+    padding:40px 20px;
+}
+
+header p{
+    margin-top:10px;
+}
+
+main{
+    width:90%;
+    max-width:1200px;
+    margin:40px auto;
+}
+
+.search-area{
+    display:flex;
+    gap:15px;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+}
+
+.search-area input,
+.search-area select{
+
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+.search-area input{
+    flex:1;
+}
+
+.items{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:25px;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.image{
+
+    height:220px;
+
+    background:#d9e7f8;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:40px;
+
+}
+
+.info{
+
+    padding:20px;
+
+}
+
+.new{
+
+    display:inline-block;
+
+    background:red;
+
+    color:white;
+
+    padding:4px 10px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    margin-bottom:10px;
+
+}
+
+.info h2{
+
+    margin-bottom:15px;
+
+}
+
+.info p{
+
+    margin:8px 0;
+
+}
+
+button{
+
+    margin-top:20px;
+
+    width:100%;
+
+    border:none;
+
+    background:#1565c0;
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+}
+
+button:hover{
+
+    background:#0d47a1;
+
+}
+
+.image{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
