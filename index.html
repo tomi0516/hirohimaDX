@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>落とし物管理システム</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modal.css">
 </head>
 <body>
 
@@ -16,9 +17,12 @@
     <main>
 
         <section class="search-area">
-            <input type="text" placeholder="落とし物を検索">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="落とし物を検索">
 
-            <select>
+            <select id="categoryFilter">
                 <option>すべて</option>
                 <option>文房具</option>
                 <option>財布</option>
@@ -33,8 +37,36 @@
 
 
     </main>
+
+    <!--モーダル-->
     
-    <script src="script.js"></script>
+    <div id="modal" class="hidden">
+
+        <div class="modal-content">
+
+            <button id="closeModal">✕</button>
+
+            <img id="modalImage" class="modal-image">
+
+            <h2 id="modalName"></h2>
+
+            <p id="modalCategory"></p>
+
+            <p id="modalFoundPlace"></p>
+
+            <p id="modalStoragePlace"></p>
+
+            <p id="modalDate"></p>
+
+            <p id="modalDescription"></p>
+
+        </div>
+
+    </div>
+    
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/modal.js"></script>
 
 </body>
 </html>

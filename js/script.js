@@ -1,58 +1,140 @@
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+
+//落とし物データ
 const items = [
     {
+        id: 1,
         name: "黒いシャープペン",
-        place: "3階廊下",
-        date: "2026/07/02",
         category: "文房具",
-        image: "https://placehold.co/400x250?text=Photo",
+
+        foundPlace: "3階廊下",
+        storagePlace: "職員室",
+
+        foundDate: "2026-07-02",
+        description: "黒色・名前なし",
+
+        image: "https://placehold.co/600x400",
+
+        status: "保管中",
+
         isNew: true
     },
+
     {
+        id: 2,
         name: "青い水筒",
-        place: "体育館",
-        date: "2026/07/01",
         category: "その他",
-        image: "https://placehold.co/400x250?text=Photo",
+
+        foundPlace: "体育館",
+        storagePlace: "職員室",
+
+        foundDate: "2026-07-01",
+        description: "青色のステンレスボトル",
+
+        image: "https://placehold.co/600x400",
+
+        status: "保管中",
+
         isNew: false
     },
+
     {
+        id: 3,
         name: "財布",
-        place: "食堂",
-        date: "2026/06/30",
         category: "財布",
-        image: "https://placehold.co/400x250?text=Photo",
+
+        foundPlace: "食堂",
+        storagePlace: "職員室",
+
+        foundDate: "2026-06-30",
+        description: "黒色の二つ折り財布",
+
+        image: "https://placehold.co/600x400",
+
+        status: "保管中",
+
         isNew: true
     }
 ];
 
 const container = document.getElementById("itemsContainer");
 
-items.forEach(item => {
 
-    container.innerHTML += `
 
-    <div class="card">
+function renderItems(itemList) {
 
-        <img src="${item.image}" class="image">
+    const container = document.getElementById("itemsContainer");
 
-        <div class="info">
+    container.innerHTML = "";
 
-            ${item.isNew ? '<span class="new">NEW</span>' : ''}
+    itemList.forEach(item => {
 
-            <h2>${item.name}</h2>
+        container.innerHTML += `
 
-            <p>📍 ${item.place}</p>
+        <div class="card">
 
-            <p>📅 ${item.date}</p>
+            <img src="${item.image}" class="image">
 
-            <p>📂 ${item.category}</p>
+            <div class="info">
 
-            <button>詳細を見る</button>
+                ${item.isNew ? '<span class="new">NEW</span>' : ''}
+
+                <h2>${item.name}</h2>
+
+                <p>📍 ${item.foundPlace}</p>
+
+                <p>📅 ${item.foundDate}</p>
+
+                <p>📂 ${item.category}</p>
+                
+                <button onclick="openModal(${item.id})">
+                詳細を見る
+                </button>
+
+            </div>
 
         </div>
 
-    </div>
+        `;
 
-    `;
+    });
 
-});
+
+}
+
+renderItems(items);
+
+
+function filterItems() {
+
+    const keyword = searchInput.value.toLowerCase();
+
+    const category = categoryFilter.value;
+
+    const filtered = items.filter(item => {
+
+        const text =
+            `${item.name}
+             ${item.category}
+             ${item.foundPlace}
+             ${item.storagePlace}
+             ${item.description}`
+            .toLowerCase();
+
+        const matchKeyword = text.includes(keyword);
+
+        const matchCategory =
+            category === "すべて" ||
+            item.category === category;
+
+        return matchKeyword && matchCategory;
+
+    });
+
+    renderItems(filtered);
+
+}
+
+searchInput.addEventListener("input", filterItems);
+categoryFilter.addEventListener("change", filterItems);
