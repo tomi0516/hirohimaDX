@@ -1,86 +1,34 @@
+import { db } from "./firebase.js";
+
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
-
-//落とし物データ
-const items = [
-    {
-        id: 1,
-        name: "黒いシャープペン",
-        category: "文房具",
-
-        foundPlace: "3階廊下",
-        storagePlace: "職員室",
-
-        foundDate: "2026-07-02",
-        description: "黒色・名前なし",
-
-        image: "https://placehold.co/600x400",
-
-        status: "保管中",
-
-        isNew: true
-    },
-
-    {
-        id: 2,
-        name: "青い水筒",
-        category: "その他",
-
-        foundPlace: "体育館",
-        storagePlace: "職員室",
-
-        foundDate: "2026-07-01",
-        description: "青色のステンレスボトル",
-
-        image: "https://placehold.co/600x400",
-
-        status: "保管中",
-
-        isNew: true
-    },
-
-    {
-        id: 3,
-        name: "財布",
-        category: "財布",
-
-        foundPlace: "食堂",
-        storagePlace: "職員室",
-
-        foundDate: "2026-06-30",
-        description: "黒色の二つ折り財布",
-
-        image: "https://placehold.co/600x400",
-
-        status: "保管中",
-
-        isNew: true
-    }
-];
-
 const container = document.getElementById("itemsContainer");
 
+let items = [];
 
+// ------------------------
+// 一覧表示
+// ------------------------
 
 function renderItems(itemList) {
-
-    const container = document.getElementById("itemsContainer");
 
     container.innerHTML = "";
 
     document.getElementById("itemCount").textContent =
-    `📦 保管中：${itemList.length}件`;
+        `📦 保管中：${itemList.length}件`;
 
-    if(itemList.length === 0){
+    if (itemList.length === 0) {
 
         container.innerHTML = `
             <p class="no-result">
                 該当する落とし物はありません。
             </p>
         `;
-
-        document.getElementById("itemCount").textContent =
-            "📦 保管中：0件";
 
         return;
     }
@@ -91,12 +39,14 @@ function renderItems(itemList) {
 
         <div class="card">
 
-            <img src="${item.image}" class="image">
+            <img
+                src="${item.image || "https://placehold.co/600x400?text=No+Image"}"
+                class="image">
 
             <div class="info">
 
-                ${item.isNew ? '<span class="new">NEW</span>' : ''}
-                
+                ${item.isNew ? '<span class="new">NEW</span>' : ""}
+
                 <span class="status">${item.status}</span>
 
                 <h2>${item.name}</h2>
@@ -106,9 +56,9 @@ function renderItems(itemList) {
                 <p>📅 ${item.foundDate}</p>
 
                 <p>📂 ${item.category}</p>
-                
-                <button onclick="openModal(${item.id})">
-                詳細を見る
+
+                <button onclick="openModal('${item.id}')">
+                    詳細を見る
                 </button>
 
             </div>
@@ -119,11 +69,38 @@ function renderItems(itemList) {
 
     });
 
+}
+
+// ------------------------
+// Firestoreから取得
+// ------------------------
+
+async function loadItems() {
+
+    try {
+
+        const snapshot = await getDocs(collection(db, "lostItems"));
+
+        items = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        console.log(items);
+
+        renderItems(items);
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
 
 }
 
-renderItems(items);
-
+// ------------------------
+// 検索
+// ------------------------
 
 function filterItems() {
 
@@ -133,21 +110,21 @@ function filterItems() {
 
     const filtered = items.filter(item => {
 
-        const text =
-            `${item.name}
-             ${item.category}
-             ${item.foundPlace}
-             ${item.storagePlace}
-             ${item.description}`
-            .toLowerCase();
+        const text = `
+            ${item.name}
+            ${item.category}
+            ${item.foundPlace}
+            ${item.storagePlace}
+            ${item.description}
+        `.toLowerCase();
 
-        const matchKeyword = text.includes(keyword);
-
-        const matchCategory =
-            category === "すべて" ||
-            item.category === category;
-
-        return matchKeyword && matchCategory;
+        return (
+            text.includes(keyword) &&
+            (
+                category === "すべて" ||
+                item.category === category
+            )
+        );
 
     });
 
@@ -157,3 +134,63 @@ function filterItems() {
 
 searchInput.addEventListener("input", filterItems);
 categoryFilter.addEventListener("change", filterItems);
+
+// ------------------------
+// 初期読み込み
+// ------------------------
+
+loadItems();
+
+
+
+
+const modal = document.getElementById("modal");
+const closeModalBtn = document.getElementById("closeModal");
+
+// モーダルを開く
+function openModal(itemId){
+
+    const item = items.find(i => i.id === itemId);
+
+    if(!item) return;
+
+    document.getElementById("modalImage").src =
+        item.image || "https://placehold.co/600x400?text=No+Image";
+
+    document.getElementById("modalName").textContent = item.name;
+
+    document.getElementById("modalCategory").textContent =
+        "📂 カテゴリ： " + item.category;
+
+    document.getElementById("modalFoundPlace").textContent =
+        "📍 発見場所： " + item.foundPlace;
+
+    document.getElementById("modalStoragePlace").textContent =
+        "🏢 保管場所： " + item.storagePlace;
+
+    document.getElementById("modalDate").textContent =
+        "📅 発見日： " + item.foundDate;
+
+    document.getElementById("modalDescription").textContent =
+        "📝 特徴： " + item.description;
+
+    modal.style.display = "flex";
+
+}
+
+// モーダルを閉じる
+function closeModal() {
+    modal.style.display = "none";
+}
+
+// ×ボタン
+closeModalBtn.addEventListener("click", closeModal);
+
+// 背景をクリックしたら閉じる
+modal.addEventListener("click", function(e) {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+window.openModal = openModal;
