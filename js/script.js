@@ -68,6 +68,23 @@ function renderItems(itemList) {
 
     container.innerHTML = "";
 
+    document.getElementById("itemCount").textContent =
+    `📦 保管中：${itemList.length}件`;
+
+    if(itemList.length === 0){
+
+        container.innerHTML = `
+            <p class="no-result">
+                該当する落とし物はありません。
+            </p>
+        `;
+
+        document.getElementById("itemCount").textContent =
+            "📦 保管中：0件";
+
+        return;
+    }
+
     itemList.forEach(item => {
 
         container.innerHTML += `
@@ -79,6 +96,8 @@ function renderItems(itemList) {
             <div class="info">
 
                 ${item.isNew ? '<span class="new">NEW</span>' : ''}
+                
+                <span class="status">${item.status}</span>
 
                 <h2>${item.name}</h2>
 

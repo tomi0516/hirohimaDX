@@ -161,3 +161,36 @@ button:hover{
     height:220px;
     object-fit:contain; /* 画像の表示方法を調整 */
 }
+
+.info-bar{
+    margin:20px 0;
+    font-weight:bold;
+}
+
+.no-result{
+
+    text-align:center;
+
+    padding:40px;
+
+    color:#666;
+
+    font-size:18px;
+}
+
+.status{
+
+    display:inline-block;
+
+    background:#28a745;
+
+    color:white;
+
+    padding:4px 10px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    margin-bottom:8px;
+}
