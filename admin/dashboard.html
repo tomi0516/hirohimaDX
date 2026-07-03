@@ -1,0 +1,48 @@
+<h1>落とし物管理システム（先生用）</h1>
+
+<div class="form">
+
+    <input
+        id="name"
+        type="text"
+        placeholder="落とし物名">
+
+    <select id="category">
+        <option>文房具</option>
+        <option>財布</option>
+        <option>衣類</option>
+        <option>電子機器</option>
+        <option>その他</option>
+    </select>
+
+    <input
+        id="foundPlace"
+        type="text"
+        placeholder="発見場所">
+
+    <input
+        id="storagePlace"
+        type="text"
+        placeholder="保管場所">
+
+    <input
+        id="foundDate"
+        type="date">
+
+    <textarea
+        id="description"
+        placeholder="特徴など"></textarea>
+
+    <button id="saveButton">
+        登録する
+    </button>
+
+</div>
+
+<hr>
+
+<h2>登録済み一覧</h2>
+
+<div id="itemList"></div>
+
+<script type="module" src="dashboard.js"></script>
