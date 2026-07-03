@@ -36,7 +36,7 @@ const items = [
 
         status: "保管中",
 
-        isNew: false
+        isNew: true
     },
 
     {
