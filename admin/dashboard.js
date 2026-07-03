@@ -6,24 +6,30 @@ import {
     getDocs,
     deleteDoc,
     updateDoc,
-    doc
+    doc,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const saveButton = document.getElementById("saveButton");
 let adminItems = [];
 let editingId = null;
+let imageUrl = "";
 
 // 一覧を取得
 async function loadItemList() {
 
-    const snapshot = await getDocs(collection(db, "lostItems"));
+    const q = collection(db, "lostItems");
 
-    adminItems = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
+    onSnapshot(q, (snapshot) => {
 
-    renderAdminItems(adminItems);
+        adminItems = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        renderAdminItems(adminItems);
+
+    });
 
 }
 
@@ -49,7 +55,9 @@ function renderAdminItems(items) {
 
                 ${item.isNew ? '<span class="new">NEW</span>' : ""}
 
-                <span class="status">${item.status}</span>
+                <span class="status ${item.status === "返却済み" ? "returned" : ""}">
+                    ${item.status}
+                </span>
 
                 <h2>${item.name}</h2>
 
@@ -64,7 +72,13 @@ function renderAdminItems(items) {
                     <button
                         class="edit-btn"
                         data-id="${item.id}">
-                        ✏ 編集
+                         ✏ 編集
+                    </button>
+
+                    <button
+                        class="return-btn"
+                        data-id="${item.id}">
+                        ✅ 返却済み
                     </button>
 
                     <button
@@ -111,27 +125,52 @@ function addButtonEvents() {
 
     });
 
+    document.querySelectorAll(".return-btn").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            returnItem(button.dataset.id);
+
+        });
+
+    });
+
 }
 
 
+
 // 登録
+let isSaving = false;
+
 saveButton.addEventListener("click", async () => {
 
+    if (isSaving) return;
+
+    isSaving = true;
+    saveButton.disabled = true;
+
     try {
+
+        let imageUrl = "";
+
+        const file = document.getElementById("imageFile").files[0];
+
+        if (file) {
+            imageUrl = await uploadImage(file);
+        }
 
         if (editingId) {
 
             await updateDoc(
                 doc(db, "lostItems", editingId),
                 {
-
                     name: document.getElementById("name").value,
                     category: document.getElementById("category").value,
                     foundPlace: document.getElementById("foundPlace").value,
                     storagePlace: document.getElementById("storagePlace").value,
                     foundDate: document.getElementById("foundDate").value,
-                    description: document.getElementById("description").value
-
+                    description: document.getElementById("description").value,
+                    image: imageUrl
                 }
             );
 
@@ -140,21 +179,14 @@ saveButton.addEventListener("click", async () => {
             await addDoc(collection(db, "lostItems"), {
 
                 name: document.getElementById("name").value,
-
                 category: document.getElementById("category").value,
-
+                image: imageUrl,
                 foundPlace: document.getElementById("foundPlace").value,
-
                 storagePlace: document.getElementById("storagePlace").value,
-
                 foundDate: document.getElementById("foundDate").value,
-
                 description: document.getElementById("description").value,
-
                 isNew: true,
-
                 status: "保管中",
-
                 createdAt: new Date()
 
             });
@@ -163,13 +195,13 @@ saveButton.addEventListener("click", async () => {
 
         alert("保存しました");
 
-        // フォームをリセット
         document.getElementById("name").value = "";
         document.getElementById("category").value = "";
         document.getElementById("foundPlace").value = "";
         document.getElementById("storagePlace").value = "";
         document.getElementById("foundDate").value = "";
         document.getElementById("description").value = "";
+        document.getElementById("imageFile").value = "";
 
         editingId = null;
         saveButton.textContent = "登録する";
@@ -181,9 +213,13 @@ saveButton.addEventListener("click", async () => {
         console.error(error);
         alert("保存に失敗しました");
 
-    }
-     
+    } finally {
 
+        isSaving = false;
+        saveButton.disabled = false;
+    }
+
+    
 });
 
 
@@ -210,6 +246,33 @@ async function deleteItem(id) {
 
 }
 
+// 返却済み
+async function returnItem(id) {
+
+    const ok = confirm("返却済みにしますか？");
+
+    if (!ok) return;
+
+    try {
+
+        await updateDoc(
+            doc(db, "lostItems", id),
+            {
+                status: "返却済み"
+            }
+        );
+
+        loadItemList();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("更新できませんでした");
+
+    }
+
+}
 
 // 編集
 
@@ -233,7 +296,32 @@ function editItem(id){
 } 
 
 
+// 画像アップロード
+async function uploadImage(file) {
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", "lost-found");
+
+    const response = await fetch(
+        "https://api.cloudinary.com/v1_1/xd6a9ui7/image/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    const data = await response.json();
+
+    return data.secure_url;
+
+}
+
+
 
 
 // 初期表示
+document.getElementById("imageFile").value = "";
+
 loadItemList();

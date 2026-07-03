@@ -2,7 +2,7 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const searchInput = document.getElementById("searchInput");
@@ -11,10 +11,9 @@ const container = document.getElementById("itemsContainer");
 
 let items = [];
 
-// ------------------------
-// 一覧表示
-// ------------------------
 
+
+// 一覧表示
 function renderItems(itemList) {
 
     container.innerHTML = "";
@@ -71,37 +70,29 @@ function renderItems(itemList) {
 
 }
 
-// ------------------------
-// Firestoreから取得
-// ------------------------
 
+// Firestoreから取得
 async function loadItems() {
 
-    try {
+    onSnapshot(collection(db, "lostItems"), (snapshot) => {
 
-        const snapshot = await getDocs(collection(db, "lostItems"));
-
-        items = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        items = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(item => item.status === "保管中");
 
         console.log(items);
 
         renderItems(items);
 
-    } catch (error) {
-
-        console.error(error);
-
-    }
+    });
 
 }
 
-// ------------------------
-// 検索
-// ------------------------
 
+// 検索
 function filterItems() {
 
     const keyword = searchInput.value.toLowerCase();
@@ -135,10 +126,8 @@ function filterItems() {
 searchInput.addEventListener("input", filterItems);
 categoryFilter.addEventListener("change", filterItems);
 
-// ------------------------
-// 初期読み込み
-// ------------------------
 
+// 初期読み込み
 loadItems();
 
 
