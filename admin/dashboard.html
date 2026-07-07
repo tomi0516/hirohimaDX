@@ -16,6 +16,12 @@
 </head>
 
 <body>
+    <header>
+        <button id="logoutButton">
+            ログアウト
+        </button>
+    </header>
+
 
 <main>
 
@@ -69,11 +75,43 @@
 
     </section>
 
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <h3>📦 保管中</h3>
+
+            <p id="keepingCount">0件</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>✅ 返却済み</h3>
+
+            <p id="returnedCount">0件</p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>📂 カテゴリ</h3>
+
+            <p id="categoryCount">0種類</p>
+
+        </div>
+
+    </section>
+
     <section class="list-area">
 
         <h2 class="list-title">
             登録済み落とし物
         </h2>
+
+        <button id="csvButton" class="csv-btn">
+            CSVファイルダウンロード
+        </button>
 
         <div id="itemList" class="item-grid"></div>
 

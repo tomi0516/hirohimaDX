@@ -1,4 +1,21 @@
+//ログイン確認
+import { auth } from "../js/firebase.js";
 import { db } from "../js/firebase.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) {
+
+        location.href = "login.html";
+
+    }
+
+});
+
 
 import {
     collection,
@@ -28,6 +45,8 @@ async function loadItemList() {
         }));
 
         renderAdminItems(adminItems);
+
+        updateStats();
 
     });
 
@@ -324,3 +343,94 @@ async function uploadImage(file) {
 document.getElementById("imageFile").value = "";
 
 loadItemList();
+
+
+// 統計情報を更新
+function updateStats() {
+
+    const keeping = adminItems.filter(
+        item => item.status === "保管中"
+    ).length;
+
+    const returned = adminItems.filter(
+        item => item.status === "返却済み"
+    ).length;
+
+    const categories = new Set(
+        adminItems.map(item => item.category)
+    );
+
+    document.getElementById("keepingCount").textContent =
+        `${keeping}件`;
+
+    document.getElementById("returnedCount").textContent =
+        `${returned}件`;
+
+    document.getElementById("categoryCount").textContent =
+        `${categories.size}種類`;
+
+}
+
+
+// ログアウト
+import {
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+document.getElementById("logoutButton")
+.addEventListener("click", async () => {
+
+    await signOut(auth);
+
+    location.href = "login.html";
+
+});
+
+//CSVファイルダウンロード
+document
+    .getElementById("csvButton")
+    .addEventListener("click", downloadCSV);
+
+function downloadCSV() {
+
+    const header = [
+        "落とし物名",
+        "カテゴリ",
+        "発見場所",
+        "保管場所",
+        "発見日",
+        "状態",
+        "特徴"
+    ];
+
+    const rows = adminItems.map(item => [
+        item.name,
+        item.category,
+        item.foundPlace,
+        item.storagePlace,
+        item.foundDate,
+        item.status,
+        item.description
+    ].map(value => `"${String(value ?? "").replace(/"/g, '""')}"`));
+
+    const csv = [
+        header,
+        ...rows
+    ]
+    .map(row => row.join(","))
+    .join("\n");
+
+    const blob = new Blob(
+        ["\uFEFF" + csv],
+        { type: "text/csv;charset=utf-8;" }
+    );
+
+    const link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+
+    link.download = "lostItems.csv";
+
+    link.click();
+
+}
