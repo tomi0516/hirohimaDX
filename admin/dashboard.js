@@ -53,8 +53,7 @@ function renderAdminItems(items) {
 
             <div class="info">
 
-                ${item.isNew ? '<span class="new">NEW</span>' : ""}
-
+            
                 <span class="status ${item.status === "返却済み" ? "returned" : ""}">
                     ${item.status}
                 </span>

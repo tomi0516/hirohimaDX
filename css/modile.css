@@ -1,0 +1,15 @@
+@media (max-width:768px){
+
+    .item-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .form{
+
+        padding:16px;
+
+    }
+
+}

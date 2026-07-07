@@ -1,55 +1,87 @@
-<h1>落とし物管理システム（先生用）</h1>
+<!DOCTYPE html>
+<html lang="ja">
 
-<div class="form">
+<head>
 
-    <input
-        id="name"
-        type="text"
-        placeholder="落とし物名">
+    <meta charset="UTF-8">
 
-    <select id="category">
-        <option>文房具</option>
-        <option>財布</option>
-        <option>衣類</option>
-        <option>電子機器</option>
-        <option>その他</option>
-    </select>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <input
-        id="foundPlace"
-        type="text"
-        placeholder="発見場所">
+    <title>お帰りママ管理システム（先生用）</title>
 
-    <input
-        id="storagePlace"
-        type="text"
-        placeholder="保管場所">
+    
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../css/mobile.css">
 
-    <input
-        id="foundDate"
-        type="date">
+</head>
 
-    <textarea
-        id="description"
-        placeholder="特徴など"></textarea>
+<body>
 
-    <input
-        id="imageFile"
-        type="file"
-        accept="image/*">
+<main>
 
-    <button id="saveButton">
-        登録する
-    </button>
+    <section class="form-card">
 
-</div>
+        <h2>落とし物を登録</h2>
 
-<hr>
+        <div class="form">
 
-<h2 class="list-title">登録済み落とし物</h2>
+            <input
+                id="name"
+                type="text"
+                placeholder="落とし物名">
 
-<div id="itemList" class="item-grid">
+            <select id="category">
+                <option>文房具</option>
+                <option>財布</option>
+                <option>衣類</option>
+                <option>電子機器</option>
+                <option>その他</option>
+            </select>
 
-</div>
+            <input
+                id="foundPlace"
+                type="text"
+                placeholder="発見場所">
+
+            <input
+                id="storagePlace"
+                type="text"
+                placeholder="保管場所">
+
+            <input
+                id="foundDate"
+                type="date">
+
+            <textarea
+                id="description"
+                placeholder="特徴など"></textarea>
+
+            <input
+                id="imageFile"
+                type="file"
+                accept="image/*">
+
+            <button id="saveButton">
+                登録する
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="list-area">
+
+        <h2 class="list-title">
+            登録済み落とし物
+        </h2>
+
+        <div id="itemList" class="item-grid"></div>
+
+    </section>
+
+</main>
 
 <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>

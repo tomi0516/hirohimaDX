@@ -34,6 +34,15 @@ function renderItems(itemList) {
 
     itemList.forEach(item => {
 
+        const created =
+            item.createdAt?.toDate
+                ? item.createdAt.toDate()
+                : new Date(item.createdAt);
+
+        const isNew =
+            Date.now() - created.getTime()
+            < 24 * 60 * 60 * 1000;
+
         container.innerHTML += `
 
         <div class="card">
@@ -44,7 +53,7 @@ function renderItems(itemList) {
 
             <div class="info">
 
-                ${item.isNew ? '<span class="new">NEW</span>' : ""}
+                ${isNew ? '<span class="new">NEW</span>' : ""}
 
                 <span class="status">${item.status}</span>
 
