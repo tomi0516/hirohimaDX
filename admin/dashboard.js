@@ -280,6 +280,23 @@ async function returnItem(id) {
             }
         );
 
+        const item = adminItems.find(item => item.id === id);
+
+        await addDoc(
+            collection(db, "returnHistory"),
+            {
+
+                itemName: item.name,
+
+                category: item.category,
+
+                foundPlace: item.foundPlace,
+
+                returnedAt: new Date(),
+
+            }
+        );
+
         loadItemList();
 
     } catch (error) {
@@ -343,6 +360,7 @@ async function uploadImage(file) {
 document.getElementById("imageFile").value = "";
 
 loadItemList();
+loadHistory();
 
 
 // 統計情報を更新
@@ -432,5 +450,42 @@ function downloadCSV() {
     link.download = "lostItems.csv";
 
     link.click();
+
+}
+
+// 返却履歴
+async function loadHistory() {
+
+    const snapshot = await getDocs(
+        collection(db, "returnHistory")
+    );
+
+    const container =
+        document.getElementById("historyList");
+
+    container.innerHTML = "";
+
+    snapshot.forEach(doc => {
+
+        const item = doc.data();
+
+        container.innerHTML += `
+
+        <div class="history-card">
+
+            <h3>${item.itemName}</h3>
+
+            <p>📍 ${item.foundPlace}</p>
+
+            <p>📅 ${
+                new Date(item.returnedAt.seconds*1000)
+                    .toLocaleString("ja-JP")
+            }</p>
+
+        </div>
+
+        `;
+
+    });
 
 }
