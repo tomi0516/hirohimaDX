@@ -62,6 +62,14 @@ function renderAdminItems(items) {
 
     items.forEach(item => {
 
+        const days =
+            Math.floor(
+                (Date.now() - new Date(item.createdAt).getTime())
+                / (1000 * 60 * 60 * 24)
+            );
+
+        const isLongTerm = days >= 30;
+
         container.innerHTML += `
 
         <div class="card">
@@ -72,7 +80,11 @@ function renderAdminItems(items) {
 
             <div class="info">
 
-            
+                ${isLongTerm
+                    ? '<span class="long-term">🟠 長期保管</span>'
+                    : ""
+                }
+
                 <span class="status ${item.status === "返却済み" ? "returned" : ""}">
                     ${item.status}
                 </span>

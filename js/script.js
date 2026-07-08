@@ -8,6 +8,7 @@ import {
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
 const container = document.getElementById("itemsContainer");
+const sortFilter = document.getElementById("sortFilter");
 
 let items = [];
 
@@ -128,12 +129,44 @@ function filterItems() {
 
     });
 
-    renderItems(filtered);
+    filtered.sort((a, b) => {
 
+        switch (sortFilter.value) {
+
+            case "createdNew":
+
+                return (b.createdAt?.toDate().getTime() ?? 0)
+                     - (a.createdAt?.toDate().getTime() ?? 0);
+
+            case "createdOld":
+
+                return (a.createdAt?.toDate().getTime() ?? 0)
+                     - (b.createdAt?.toDate().getTime() ?? 0);
+
+            case "foundNew":
+
+                return new Date(b.foundDate).getTime()
+                     - new Date(a.foundDate).getTime();
+
+            case "foundOld":
+
+                return new Date(a.foundDate).getTime()
+                     - new Date(b.foundDate).getTime();
+
+            default:
+
+                return 0;
+
+        }
+
+    });
+    
+    renderItems(filtered);
 }
 
 searchInput.addEventListener("input", filterItems);
 categoryFilter.addEventListener("change", filterItems);
+sortFilter.addEventListener("change", filterItems);
 
 
 // 初期読み込み
