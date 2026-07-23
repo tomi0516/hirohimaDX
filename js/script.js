@@ -225,3 +225,32 @@ modal.addEventListener("click", function(e) {
 });
 
 window.openModal = openModal;
+
+
+const liveModal = document.getElementById("liveModal");
+const liveButton = document.getElementById("liveButton");
+const closeLiveModal =
+    document.getElementById("closeLiveModal");
+
+liveButton.addEventListener("click", () => {
+
+    liveModal.style.display = "flex";
+
+});
+
+closeLiveModal.addEventListener("click", () => {
+
+    liveModal.style.display = "none";
+
+});
+
+
+liveModal.addEventListener("click", (e) => {
+
+    if (e.target === liveModal) {
+
+        liveModal.style.display = "none";
+
+    }
+
+});

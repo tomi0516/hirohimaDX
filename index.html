@@ -10,11 +10,53 @@
     <link rel="stylesheet" href="css/mobile.css">
 
 </head>
+
+
+<!-- ライブ配信モーダル -->
+<div id="liveModal" class="hidden">
+
+    <div class="live-modal-content">
+
+        <button id="closeLiveModal">✕</button>
+
+        <h2 class="live-text">落とし物ボックス ライブ配信</h2>
+
+        <div class="live-wrapper">
+
+            <iframe
+                src="https://www.youtube.com/embed/配信ID"
+                title="落とし物ボックスライブ"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+        <p class="live-note">
+            ※ 音声は配信されません。ボックス内部のみを撮影しています
+        </p>
+
+    </div>
+
+</div>
+
+
 <body>
 
-    <header>
-        <h1>🏫 広島高校 お帰りママ</h1>
-        <p>学校で見つかった落とし物を確認できます。</p>
+    <header class="header">
+
+        <div class="header-row">
+
+            <h1>広島高校 お帰りママ</h1>
+
+            <button id="liveButton" class="live-btn">
+                ライブ配信
+            </button>
+
+        </div>
+
+        <p>学校で見つかった落とし物を確認できます</p>
+
     </header>
 
     <main>
