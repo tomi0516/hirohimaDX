@@ -391,14 +391,12 @@ textarea:focus{
 .live-btn{
     position:absolute; 
     right:0;
-    top:50%;
-    transform:translateY(-10%);
-
+    top:5%;
     background:#c0392b;
     color:white;
     border:none;
     border-radius:12px;
-    padding:10px 18px;
+    padding:20px 70px;
     font-weight:bold;
     cursor:pointer;
     white-space:nowrap;
