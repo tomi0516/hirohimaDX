@@ -378,30 +378,25 @@ textarea:focus{
 .header-row{
     position:relative;
     display:flex;
-    justify-content:center;   /* ← タイトルを中央に */
+    justify-content:center;  
     align-items:center;
 }
 
+
+
 .header-row h1{
-    margin:0;
-    font-size:40px;
-    text-align:center;
+
+    font-size:clamp(28px,6vw,48px);
+
 }
 
 .live-btn{
-    position:absolute; 
-    right:0;
-    top:5%;
-    background:#c0392b;
-    color:white;
-    border:none;
-    border-radius:12px;
-    padding:20px 70px;
-    font-weight:bold;
-    cursor:pointer;
-    white-space:nowrap;
-    transition:.2s;
+    position:absolute;
+    top:24px;
+    right:24px;
+    background:#eb1616;
     width:auto;
+    padding:20px 70px;
 }
 
 .header p{
