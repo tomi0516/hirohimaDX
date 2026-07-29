@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>落とし物登録用フォーム（生徒用）</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+</head>
+
+
+<body>
+
+    <header>
+        <h1>落とし物登録</h1>
+        <p>
+            登録された情報は先生が確認した後に公開されます。
+        </p>
+    </header>
+
+<main>
+
+    <section class="form-card">
+
+        <h2>落とし物を登録</h2>
+
+        <div class="form">
+
+            <input id="name" type="text" placeholder="落とし物名">
+
+            <select id="category">
+                <option>文房具</option>
+                <option>財布</option>
+                <option>衣類</option>
+                <option>電子機器</option>
+                <option>その他</option>
+            </select>
+
+            <input id="foundPlace" type="text" placeholder="発見場所">
+
+            <input id="storagePlace" type="text" placeholder="保管場所">
+
+            <input id="foundDate" type="date">
+
+            <textarea id="description" placeholder="特徴など"></textarea>
+
+            <input id="imageFile" type="file" accept="image/*">
+
+            <button id="saveButton">
+                登録する
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script type="module" src="register.js"></script>
+
+</body>
+</html>

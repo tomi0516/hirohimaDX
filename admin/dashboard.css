@@ -486,3 +486,15 @@ textarea:focus{
     margin-bottom:8px;
 
 }
+
+.approve-btn{
+
+    background:#f59e0b;
+
+}
+
+.approve-btn:hover{
+
+    background:#d97706;
+
+}

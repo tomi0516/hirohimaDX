@@ -294,11 +294,6 @@ textarea:focus{
 }
 
 
-.live-btn:hover{
-
-    background:#b91c1c;
-
-}
 
 #liveModal{
 
@@ -390,15 +385,6 @@ textarea:focus{
 
 }
 
-.live-btn{
-    position:absolute;
-    top:24px;
-    right:24px;
-    background:#eb1616;
-    width:auto;
-    padding:20px 70px;
-}
-
 .header p{
     margin-top:10px;
     margin-bottom:0;
@@ -459,4 +445,38 @@ button:active{
 
 .live-text{
     margin-bottom: 13px;
+}
+
+.register-btn{
+    position:absolute;
+    top:24px;
+    right:24px;
+    background:#eb1616;
+    width:auto;
+    padding:10px 20px;
+    margin-top: 20px;
+    
+}
+
+.register-btn:hover{
+
+    background:#b91c1c;
+
+}
+
+.live-btn{
+    position:absolute;
+    top:24px;
+    right:24px;
+    background:#eb1616;
+    width:auto;
+    padding:10px 27px;
+    margin-top: 70px;
+    
+}
+
+.live-btn:hover{
+
+    background:#b91c1c;
+
 }

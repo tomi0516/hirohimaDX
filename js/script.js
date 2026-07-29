@@ -2,7 +2,9 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    onSnapshot
+    onSnapshot,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const searchInput = document.getElementById("searchInput");
@@ -84,23 +86,23 @@ function renderItems(itemList) {
 // Firestoreから取得
 async function loadItems() {
 
-    onSnapshot(collection(db, "lostItems"), (snapshot) => {
+    const q = query(
+        collection(db, "lostItems"),
+        where("status", "==", "保管中")
+    );
 
-        items = snapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-            .filter(item => item.status === "保管中");
+    onSnapshot(q, (snapshot) => {
 
-        console.log(items);
+        items = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
         renderItems(items);
 
     });
 
 }
-
 
 // 検索
 function filterItems() {

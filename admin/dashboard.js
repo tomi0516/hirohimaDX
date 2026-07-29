@@ -99,21 +99,23 @@ function renderAdminItems(items) {
 
                 <div class="button-area">
 
-                    <button
-                        class="edit-btn"
-                        data-id="${item.id}">
-                         ✏ 編集
+                    ${item.status === "確認中" ? `
+                        <button class="approve-btn" data-id="${item.id}">
+                            ✔ 承認
+                        </button>
+                    ` : ""}
+
+                    <button class="edit-btn" data-id="${item.id}">
+                        ✏ 編集
                     </button>
 
-                    <button
-                        class="return-btn"
-                        data-id="${item.id}">
-                        ✅ 返却済み
-                    </button>
+                    ${item.status === "保管中" ? `
+                        <button class="return-btn" data-id="${item.id}">
+                            ✅ 返却済み
+                        </button>
+                    ` : ""}
 
-                    <button
-                        class="delete-btn"
-                        data-id="${item.id}">
+                    <button class="delete-btn" data-id="${item.id}">
                         🗑 削除
                     </button>
 
@@ -160,6 +162,16 @@ function addButtonEvents() {
         button.addEventListener("click", () => {
 
             returnItem(button.dataset.id);
+
+        });
+
+    });
+
+    document.querySelectorAll(".approve-btn").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            approveItem(button.dataset.id);
 
         });
 
@@ -321,6 +333,32 @@ async function returnItem(id) {
 
 }
 
+// 承認
+async function approveItem(id) {
+
+    const ok = confirm("この落とし物を公開しますか？");
+
+    if (!ok) return;
+
+    try {
+
+        await updateDoc(
+            doc(db, "lostItems", id),
+            {
+                status: "保管中"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+        alert("承認できませんでした");
+
+    }
+
+}
+
+
 // 編集
 
 function editItem(id){
@@ -378,6 +416,9 @@ loadHistory();
 // 統計情報を更新
 function updateStats() {
 
+    const pending =
+        adminItems.filter(item => item.status === "確認中").length;
+
     const keeping = adminItems.filter(
         item => item.status === "保管中"
     ).length;
@@ -389,6 +430,9 @@ function updateStats() {
     const categories = new Set(
         adminItems.map(item => item.category)
     );
+
+    document.getElementById("pendingCount").textContent =
+        `${pending}件`;
 
     document.getElementById("keepingCount").textContent =
         `${keeping}件`;
