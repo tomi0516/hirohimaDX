@@ -108,14 +108,6 @@ button{
 
 }
 
-.returned{
-
-    background:#9E9E9E;
-
-    color:white;
-
-}
-
 :root{
 
     --primary:#2563eb;
@@ -208,26 +200,6 @@ button:hover{
 .info{
 
     padding:18px;
-
-}
-
-.status{
-
-    background:#28a745;
-
-    color:white;
-
-    padding:6px 12px;
-
-    border-radius:30px;
-
-    font-size:13px;
-
-}
-
-.returned{
-
-    background:#a4a4a4;
 
 }
 
@@ -496,5 +468,106 @@ textarea:focus{
 .approve-btn:hover{
 
     background:#d97706;
+
+}
+
+/*検索機能*/
+.filter-area{
+
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+
+    margin:20px 0;
+
+}
+
+.filter-area input{
+
+    flex:1;
+    min-width:260px;
+
+}
+
+.filter-area select{
+
+    width:200px;
+
+}
+
+/*通知機能*/
+.notification{
+
+    background:#fff3cd;
+
+    border-left:6px solid #f59e0b;
+
+    padding:18px 20px;
+
+    border-radius:12px;
+
+    margin-bottom:25px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    color:#856404;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.notification:hover{
+
+    background:#ffe69c;
+
+}
+
+/*スクロールマージンの調整(ずれたとき用)*/
+
+
+.list-area{
+    scroll-margin-top: -100px;
+}
+
+/*バッチの色*/
+.status{
+
+    background:#28a745;
+
+    color:white;
+
+    padding:6px 12px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    display:inline-block;
+
+    font-weight:bold;
+
+}
+
+.returned{
+
+    background:#9E9E9E;
+
+    color:white;
+
+}
+
+.pending{
+
+    background:#f59e0b;
+
+}
+
+.keeping{
+
+    background:#2563eb;
 
 }

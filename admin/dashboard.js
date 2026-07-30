@@ -39,12 +39,35 @@ async function loadItemList() {
 
     onSnapshot(q, (snapshot) => {
 
-        adminItems = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        adminItems = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .sort((a, b) => {
 
-        renderAdminItems(adminItems);
+                const order = {
+                    "確認中": 0,
+                    "保管中": 1,
+                    "返却済み": 2
+                };
+
+                const statusDiff =
+                    (order[a.status] ?? 99) -
+                    (order[b.status] ?? 99);
+
+                if (statusDiff !== 0) {
+                    return statusDiff;
+                }
+
+                const dateA = a.createdAt?.toDate?.() ?? new Date(a.createdAt);
+                const dateB = b.createdAt?.toDate?.() ?? new Date(b.createdAt);
+
+                return dateB - dateA;
+
+            });
+
+        filterItems();
 
         updateStats();
 
@@ -85,7 +108,12 @@ function renderAdminItems(items) {
                     : ""
                 }
 
-                <span class="status ${item.status === "返却済み" ? "returned" : ""}">
+                <span class="
+                    status
+                    ${item.status === "確認中" ? "pending" : ""}
+                    ${item.status === "保管中" ? "keeping" : ""}
+                    ${item.status === "返却済み" ? "returned" : ""}
+                ">
                     ${item.status}
                 </span>
 
@@ -443,6 +471,40 @@ function updateStats() {
     document.getElementById("categoryCount").textContent =
         `${categories.size}種類`;
 
+    const notification =
+        document.getElementById("notification");
+
+    const notificationText =
+        document.getElementById("notificationText");
+
+    //通知機能
+    notification.addEventListener("click", () => {
+
+        searchInput.value = "";
+
+        categoryFilter.value = "すべて";
+
+        statusFilter.value = "確認中";
+
+        filterItems();
+
+        document.getElementById("listArea").scrollIntoView({
+        
+            behavior: "smooth",
+            block: "start"
+
+        });
+
+    });
+
+    if (pending > 0) {
+        notification.style.display = "block";
+        notificationText.textContent =
+            `🔔 確認待ちの落とし物が ${pending} 件あります（クリックして確認）`;
+    } else {
+        notification.style.display = "none";
+    }
+
 }
 
 
@@ -545,3 +607,61 @@ async function loadHistory() {
     });
 
 }
+
+//検索機能
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+
+function filterItems(){
+
+    const keyword = searchInput.value.toLowerCase();
+
+    const status = statusFilter.value;
+
+    const category = categoryFilter.value;
+
+    const filtered = adminItems.filter(item=>{
+
+        const text = `
+            ${item.name}
+            ${item.foundPlace}
+            ${item.storagePlace}
+            ${item.description}
+        `.toLowerCase();
+
+        return (
+
+            text.includes(keyword)
+
+            &&
+
+            (
+                status === "すべて"
+                ||
+                item.status === status
+            )
+
+            &&
+
+            (
+                category === "すべて"
+                ||
+                item.category === category
+            )
+
+        );
+
+    });
+
+    renderAdminItems(filtered);
+
+}
+
+searchInput.addEventListener("input", filterItems);
+
+statusFilter.addEventListener("change", filterItems);
+
+categoryFilter.addEventListener("change", filterItems);
+
+

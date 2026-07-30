@@ -89,6 +89,7 @@ async function loadItems() {
     const q = query(
         collection(db, "lostItems"),
         where("status", "==", "保管中")
+        //where("status", "in", ["保管中","返却済み"]) (返却済みも表示する場合)
     );
 
     onSnapshot(q, (snapshot) => {

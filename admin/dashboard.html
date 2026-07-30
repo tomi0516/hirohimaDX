@@ -25,6 +25,10 @@
 
 <main>
 
+    <div id="notification" class="notification" style="display:none;">
+        <span id="notificationText"></span>
+    </div>
+
     <section class="form-card">
 
         <h2>落とし物を登録</h2>
@@ -108,7 +112,7 @@
 
     </section>
 
-    <section class="list-area">
+    <section class="list-area" id="listArea">
 
         <h2 class="list-title">
             登録済み落とし物
@@ -117,6 +121,33 @@
         <button id="csvButton" class="csv-btn">
             CSVファイルダウンロード
         </button>
+
+        <div class="filter-area">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="落とし物名・発見場所・保管場所・特徴で検索">
+
+            <select id="statusFilter">
+                <option value="すべて">すべての状態</option>
+                <option value="確認中">確認中</option>
+                <option value="保管中">保管中</option>
+                <option value="返却済み">返却済み</option>
+            </select>
+
+            <select id="categoryFilter">
+                <option value="すべて">すべてのカテゴリ</option>
+                <option value="文房具">文房具</option>
+                <option value="財布">財布</option>
+                <option value="衣類">衣類</option>
+                <option value="電子機器">電子機器</option>
+                <option value="その他">その他</option>
+            </select>
+
+        </div>
+
+
 
         <div id="itemList" class="item-grid"></div>
 
