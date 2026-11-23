@@ -38,6 +38,7 @@ import {
 
 const saveButton = document.getElementById("saveButton");
 let adminItems = [];
+let lostItemDocuments = [];
 let studentReportsByItemId = {};
 let editingId = null;
 let imageUrl = "";
@@ -49,38 +50,11 @@ async function loadItemList() {
 
     onSnapshot(q, (snapshot) => {
 
-        adminItems = snapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                ...(studentReportsByItemId[doc.id] || {})
-            }))
-            .sort((a, b) => {
-
-                const order = {
-                    "確認中": 0,
-                    "保管中": 1,
-                    "返却済み": 2
-                };
-
-                const statusDiff =
-                    (order[a.status] ?? 99) -
-                    (order[b.status] ?? 99);
-
-                if (statusDiff !== 0) {
-                    return statusDiff;
-                }
-
-                const dateA = a.createdAt?.toDate?.() ?? new Date(a.createdAt);
-                const dateB = b.createdAt?.toDate?.() ?? new Date(b.createdAt);
-
-                return dateB - dateA;
-
-            });
-
-        filterItems();
-
-        updateStats();
+        lostItemDocuments = snapshot.docs.map(item => ({
+            id: item.id,
+            ...item.data()
+        }));
+        refreshAdminItems();
 
     });
 
@@ -88,9 +62,29 @@ async function loadItemList() {
         studentReportsByItemId = Object.fromEntries(
             snapshot.docs.map(report => [report.id, report.data()])
         );
-        filterItems();
+        refreshAdminItems();
     });
 
+}
+
+function refreshAdminItems() {
+    adminItems = lostItemDocuments
+        .map(item => ({
+            ...item,
+            ...(studentReportsByItemId[item.id] || {})
+        }))
+        .sort((a, b) => {
+            const order = { "確認中": 0, "保管中": 1, "返却済み": 2 };
+            const statusDiff = (order[a.status] ?? 99) - (order[b.status] ?? 99);
+            if (statusDiff !== 0) return statusDiff;
+
+            const dateA = a.createdAt?.toDate?.() ?? new Date(a.createdAt);
+            const dateB = b.createdAt?.toDate?.() ?? new Date(b.createdAt);
+            return dateB - dateA;
+        });
+
+    filterItems();
+    updateStats();
 }
 
 
@@ -657,6 +651,8 @@ function filterItems(){
 
         const text = `
             ${item.name}
+            ${item.studentName}
+            ${item.studentId}
             ${item.foundPlace}
             ${item.storagePlace}
             ${item.description}
