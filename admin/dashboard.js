@@ -547,10 +547,6 @@ function updateStats() {
 
 
 // ログアウト
-import {
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-
 document.getElementById("logoutButton")
 .addEventListener("click", async () => {
 
