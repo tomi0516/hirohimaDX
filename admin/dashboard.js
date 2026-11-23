@@ -56,6 +56,13 @@ async function loadItemList() {
         }));
         refreshAdminItems();
 
+    }, (error) => {
+        console.error("lostItems の読み込みに失敗しました:", error);
+        const container = document.getElementById("itemList");
+        container.textContent = error.code === "permission-denied"
+            ? "落とし物データを読む権限がありません。先生アカウントのUIDとFirestoreルールを確認してください。"
+            : "落とし物データを読み込めませんでした。通信状態を確認してください。";
+
     });
 
     onSnapshot(collection(db, "studentReports"), (snapshot) => {
@@ -63,6 +70,11 @@ async function loadItemList() {
             snapshot.docs.map(report => [report.id, report.data()])
         );
         refreshAdminItems();
+    }, (error) => {
+        console.error("studentReports の読み込みに失敗しました:", error);
+        if (error.code === "permission-denied") {
+            console.error("先生UIDまたは studentReports のFirestoreルールを確認してください。");
+        }
     });
 
 }
