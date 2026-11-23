@@ -547,13 +547,19 @@ function updateStats() {
 
 
 // ログアウト
-document.getElementById("logoutButton")
-.addEventListener("click", async () => {
+const logoutButton = document.getElementById("logoutButton");
 
-    await signOut(auth);
+logoutButton.addEventListener("click", async () => {
+    logoutButton.disabled = true;
 
-    location.href = "login.html";
-
+    try {
+        await signOut(auth);
+        window.location.replace("./login.html");
+    } catch (error) {
+        console.error("ログアウトに失敗しました:", error);
+        alert("ログアウトできませんでした。通信状態を確認して、もう一度お試しください。");
+        logoutButton.disabled = false;
+    }
 });
 
 //CSVファイルダウンロード
