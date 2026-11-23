@@ -3,16 +3,25 @@ import { auth } from "../js/firebase.js";
 import { db } from "../js/firebase.js";
 
 import {
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
-onAuthStateChanged(auth, (user) => {
+const TEACHER_UID = "lTkJTjX3opVRs7q2yJ6XY8J2DSM2";
 
-    if (!user) {
+onAuthStateChanged(auth, async (user) => {
+
+    if (!user || user.uid !== TEACHER_UID) {
+
+        if (user) await signOut(auth);
 
         location.href = "login.html";
+        return;
 
     }
+
+    loadItemList();
+    loadHistory();
 
 });
 
@@ -21,14 +30,15 @@ import {
     collection,
     addDoc,
     getDocs,
-    deleteDoc,
     updateDoc,
     doc,
-    onSnapshot
+    onSnapshot,
+    writeBatch
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const saveButton = document.getElementById("saveButton");
 let adminItems = [];
+let studentReportsByItemId = {};
 let editingId = null;
 let imageUrl = "";
 
@@ -42,7 +52,8 @@ async function loadItemList() {
         adminItems = snapshot.docs
             .map(doc => ({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data(),
+                ...(studentReportsByItemId[doc.id] || {})
             }))
             .sort((a, b) => {
 
@@ -71,6 +82,13 @@ async function loadItemList() {
 
         updateStats();
 
+    });
+
+    onSnapshot(collection(db, "studentReports"), (snapshot) => {
+        studentReportsByItemId = Object.fromEntries(
+            snapshot.docs.map(report => [report.id, report.data()])
+        );
+        filterItems();
     });
 
 }
@@ -119,6 +137,10 @@ function renderAdminItems(items) {
 
                 <h2>${item.name}</h2>
 
+                ${item.studentId || item.studentName ? `
+                    <p>👤 登録者：${escapeHtml(item.studentName || "氏名未登録")}（学籍番号 ${escapeHtml(item.studentId || "未登録")}）</p>
+                ` : ""}
+
                 <p>📍 ${item.foundPlace}</p>
 
                 <p>📅 ${item.foundDate}</p>
@@ -159,6 +181,16 @@ function renderAdminItems(items) {
 
     addButtonEvents();
 
+}
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
 }
 
 
@@ -302,7 +334,10 @@ async function deleteItem(id) {
 
     try {
 
-        await deleteDoc(doc(db, "lostItems", id));
+        const batch = writeBatch(db);
+        batch.delete(doc(db, "lostItems", id));
+        batch.delete(doc(db, "studentReports", id));
+        await batch.commit();
 
         loadItemList();
 
@@ -436,9 +471,6 @@ async function uploadImage(file) {
 
 // 初期表示
 document.getElementById("imageFile").value = "";
-
-loadItemList();
-loadHistory();
 
 
 // 統計情報を更新

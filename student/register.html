@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>落とし物登録用フォーム（生徒用）</title>
 
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../admin/dashboard.css">
     <link rel="stylesheet" href="../css/mobile.css">
 </head>
 
@@ -18,6 +18,9 @@
         <p>
             登録された情報は先生が確認した後に公開されます。
         </p>
+        <p>
+            学籍番号、氏名は公開されません。
+        </p>
     </header>
 
 <main>
@@ -27,6 +30,10 @@
         <h2>落とし物を登録</h2>
 
         <div class="form">
+
+            <input id="studentId" type="text" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]{4}" placeholder="学籍番号（4桁）" required>
+
+            <input id="studentName" type="text" autocomplete="name" maxlength="50" placeholder="氏名" required>
 
             <input id="name" type="text" placeholder="落とし物名">
 

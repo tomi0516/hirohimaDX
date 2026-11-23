@@ -2,7 +2,9 @@ import { db } from "../js/firebase.js";
 
 import {
     collection,
-    addDoc
+    doc,
+    writeBatch,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const saveButton = document.getElementById("saveButton");
@@ -19,6 +21,19 @@ saveButton.addEventListener("click", async () => {
 
     try {
 
+        const studentId = document.getElementById("studentId").value.trim();
+        const studentName = document.getElementById("studentName").value.trim();
+
+        if (!/^\d{4}$/.test(studentId)) {
+            alert("学籍番号は4桁の数字で入力してください。");
+            return;
+        }
+
+        if (!studentName) {
+            alert("氏名を入力してください。");
+            return;
+        }
+
         let imageUrl = "";
 
         const file = document.getElementById("imageFile").files[0];
@@ -27,7 +42,11 @@ saveButton.addEventListener("click", async () => {
             imageUrl = await uploadImage(file);
         }
 
-        await addDoc(collection(db, "lostItems"), {
+        const itemRef = doc(collection(db, "lostItems"));
+        const reportRef = doc(db, "studentReports", itemRef.id);
+        const batch = writeBatch(db);
+
+        batch.set(itemRef, {
 
             name: document.getElementById("name").value,
 
@@ -47,14 +66,25 @@ saveButton.addEventListener("click", async () => {
 
             status: "確認中",
 
-            createdAt: new Date()
+            createdAt: serverTimestamp()
 
         });
+
+        batch.set(reportRef, {
+            itemId: itemRef.id,
+            studentId,
+            studentName,
+            createdAt: serverTimestamp()
+        });
+
+        await batch.commit();
 
         alert("登録完了しました。先生が確認後に公開されます。");
 
         // フォーム初期化
         document.getElementById("name").value = "";
+        document.getElementById("studentId").value = "";
+        document.getElementById("studentName").value = "";
         document.getElementById("category").value = "";
         document.getElementById("foundPlace").value = "";
         document.getElementById("storagePlace").value = "";

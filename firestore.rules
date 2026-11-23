@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isTeacher() {
+      return request.auth != null
+        && request.auth.uid == "lTkJTjX3opVRs7q2yJ6XY8J2DSM2";
+    }
+
+    function reportPath(id) {
+      return /databases/$(database)/documents/studentReports/$(id);
+    }
+
+    function itemPath(id) {
+      return /databases/$(database)/documents/lostItems/$(id);
+    }
+
+    match /lostItems/{id} {
+      // Only clean public item documents may be read by the homepage.
+      // The query must include status == "保管中".
+      allow get, list: if isTeacher()
+        || (resource.data.status == "保管中"
+          && !resource.data.keys().hasAny(["studentId", "studentName"]));
+
+      // Students may submit a public item and its private report together.
+      allow create: if isTeacher()
+        || (request.resource.data.keys().hasOnly([
+            "name", "category", "image", "foundPlace", "storagePlace",
+            "foundDate", "description", "isNew", "status", "createdAt"
+          ])
+          && request.resource.data.keys().hasAll([
+            "name", "category", "image", "foundPlace", "storagePlace",
+            "foundDate", "description", "isNew", "status", "createdAt"
+          ])
+          && request.resource.data.status == "確認中"
+          && request.resource.data.createdAt == request.time
+          && existsAfter(reportPath(id))
+          && getAfter(reportPath(id)).data.itemId == id
+          && getAfter(reportPath(id)).data.createdAt == request.time);
+
+      allow update, delete: if isTeacher();
+    }
+
+    match /studentReports/{id} {
+      allow get, list: if isTeacher();
+
+      allow create: if isTeacher()
+        || (!exists(reportPath(id))
+          && request.resource.data.keys().hasOnly(["itemId", "studentId", "studentName", "createdAt"])
+          && request.resource.data.itemId == id
+          && request.resource.data.studentId is string
+          && request.resource.data.studentId.matches("^[0-9]{4}$")
+          && request.resource.data.studentName is string
+          && request.resource.data.studentName.size() > 0
+          && request.resource.data.studentName.size() <= 50
+          && request.resource.data.createdAt == request.time
+          && existsAfter(itemPath(id))
+          && getAfter(itemPath(id)).data.status == "確認中"
+          && getAfter(itemPath(id)).data.createdAt == request.time);
+
+      allow update, delete: if isTeacher();
+    }
+
+    match /returnHistory/{id} {
+      allow read, write: if isTeacher();
+    }
+  }
+}
