@@ -41,7 +41,7 @@ let adminItems = [];
 let lostItemDocuments = [];
 let studentReportsByItemId = {};
 let editingId = null;
-let imageUrl = "";
+let editingImageUrl = "";
 
 // 一覧を取得
 async function loadItemList() {
@@ -259,13 +259,10 @@ saveButton.addEventListener("click", async () => {
 
     try {
 
-        let imageUrl = "";
-
         const file = document.getElementById("imageFile").files[0];
-
-        if (file) {
-            imageUrl = await uploadImage(file);
-        }
+        const imageUrl = file
+            ? await uploadImage(file)
+            : (editingId ? editingImageUrl : "");
 
         if (editingId) {
 
@@ -312,7 +309,9 @@ saveButton.addEventListener("click", async () => {
         document.getElementById("imageFile").value = "";
 
         editingId = null;
+        editingImageUrl = "";
         saveButton.textContent = "登録する";
+        document.getElementById("formTitle").textContent = "落とし物を登録";
 
         loadItemList();
 
@@ -437,6 +436,7 @@ function editItem(id){
     if(!item) return;
 
     editingId = id;
+    editingImageUrl = item.image || "";
 
     document.getElementById("name").value = item.name;
     document.getElementById("category").value = item.category;
@@ -445,7 +445,12 @@ function editItem(id){
     document.getElementById("foundDate").value = item.foundDate;
     document.getElementById("description").value = item.description;
 
+    document.getElementById("formTitle").textContent = "落とし物情報を編集";
     saveButton.textContent = "更新する";
+    document.getElementById("itemForm").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 
 } 
 
